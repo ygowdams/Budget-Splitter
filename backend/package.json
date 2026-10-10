@@ -1,0 +1,14 @@
+{
+  "name": "tripsplit-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "budget-splitter.cjs",
+  "scripts": {
+    "start": "node budget-splitter.cjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.1"
+  }
+}
