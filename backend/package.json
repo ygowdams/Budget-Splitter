@@ -2,9 +2,9 @@
   "name": "tripsplit-backend",
   "version": "1.0.0",
   "private": true,
-  "main": "budget-splitter.cjs",
+  "main": "budget-splitter.js",
   "scripts": {
-    "start": "node budget-splitter.cjs"
+    "start": "node budget-splitter.js"
   },
   "dependencies": {
     "cors": "^2.8.6",

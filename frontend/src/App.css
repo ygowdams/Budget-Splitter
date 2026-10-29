@@ -295,3 +295,61 @@ button {
   }
 
 }
+
+/* Equal expense split */
+.split-section {
+  margin-top: 18px;
+  padding: 16px;
+  background: #f5f8fb;
+  border: 1px solid #e7edf4;
+  border-radius: 10px;
+}
+
+.split-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.split-heading h4 {
+  margin: 0;
+}
+
+.split-heading span {
+  color: #64748b;
+  background: #e8eef5;
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.split-note {
+  color: #64748b;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.split-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e3eaf1;
+}
+
+.split-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.split-row strong {
+  text-align: right;
+  font-size: 14px;
+}
+
+.gets-money { color: #16803c; }
+.owes-money { color: #c2413b; }
+.settled-money { color: #64748b; }

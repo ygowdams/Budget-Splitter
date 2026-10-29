@@ -505,6 +505,45 @@ function App() {
 
 
     // =====================================================
+    // CALCULATE EACH MEMBER'S NET BALANCE
+    // Positive = receives money; negative = owes money
+    // =====================================================
+
+    const getMemberBalances = (trip) => {
+
+        const members = trip.members || [];
+        const balancesInPaise = Object.fromEntries(
+            members.map((member) => [member, 0])
+        );
+
+        if (members.length === 0) return [];
+
+        getTripExpenses(trip._id).forEach((expense) => {
+            const amount = Math.round(Number(expense.amount) * 100);
+            const payer = expense.paidBy;
+
+            // Credit the person who paid for the expense.
+            if (Object.prototype.hasOwnProperty.call(balancesInPaise, payer)) {
+                balancesInPaise[payer] += amount;
+            }
+
+            // Split every expense equally between all current trip members.
+            const share = Math.floor(amount / members.length);
+            const remainder = amount % members.length;
+
+            members.forEach((member, index) => {
+                balancesInPaise[member] -= share + (index < remainder ? 1 : 0);
+            });
+        });
+
+        return members.map((name) => ({
+            name,
+            balance: balancesInPaise[name] / 100
+        }));
+    };
+
+
+    // =====================================================
     // TOTAL SPENT
     // =====================================================
 
@@ -938,10 +977,43 @@ function App() {
                                             Total Spent: ₹
                                             {getTotal(
                                                 tripId
-                                            ).toLocaleString()}
+                                            ).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 
                                         </div>
 
+                                    </div>
+
+
+                                    {/* SPLIT MONEY */}
+                                    <div className="split-section">
+                                        <div className="split-heading">
+                                            <h4>💸 Split Money</h4>
+                                            <span>Equal split</span>
+                                        </div>
+
+                                        {trip.members.length === 0 ? (
+                                            <p className="empty">Add group members to calculate each person's share.</p>
+                                        ) : tripExpenses.length === 0 ? (
+                                            <p className="empty">Add an expense to see who owes money.</p>
+                                        ) : (
+                                            <>
+                                                <p className="split-note">
+                                                    Each expense is shared equally among {trip.members.length} {trip.members.length === 1 ? "member" : "members"}.
+                                                </p>
+                                                {getMemberBalances(trip).map((member) => (
+                                                    <div className="split-row" key={member.name}>
+                                                        <span>{member.name}</span>
+                                                        <strong className={member.balance > 0.009 ? "gets-money" : member.balance < -0.009 ? "owes-money" : "settled-money"}>
+                                                            {member.balance > 0.009
+                                                                ? `Gets ₹${member.balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                                                : member.balance < -0.009
+                                                                    ? `Owes ₹${Math.abs(member.balance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                                                    : "Settled"}
+                                                        </strong>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        )}
                                     </div>
 
 
