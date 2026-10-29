@@ -1,2 +1,4 @@
-module.exports = require("./budget-splitter");
+
+const app = require("./budget-splitter");
+
 module.exports = app;
