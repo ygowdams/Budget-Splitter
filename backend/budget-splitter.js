@@ -6,10 +6,15 @@ const Trip = require("./model/trip");
 const Expense = require("./model/expenses");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    process.env.FRONTEND_URL
+].filter(Boolean);
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type"]
 }));
@@ -24,13 +29,21 @@ app.use((req, res, next) => {
 
 
 // MongoDB Connection
-mongoose.connect("mongodb://localhost:27017/travelDB")
-    .then(() => {
-        console.log("MongoDB Connected Successfully");
-    })
-    .catch(error => {
-        console.error("MongoDB Connection Error:", error);
-    });
+async function connectDB() {
+    try {
+        if (!process.env.MONGODB_URI) {
+            throw new Error("MONGODB_URI is not configured");
+        }
+
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        console.log("MongoDB Atlas Connected Successfully");
+
+    } catch (error) {
+        console.error("MongoDB Connection Error:", error.message);
+        throw error;
+    }
+}
 
 
 // Home
@@ -421,6 +434,19 @@ app.delete("/api/expenses/:id", async (req, res) => {
 // START SERVER
 // =====================================================
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// START SERVER
+async function startServer() {
+    try {
+        await connectDB();
+
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`TripSplit backend running on port ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Server startup failed:", error.message);
+        process.exit(1);
+    }
+}
+
+startServer();
